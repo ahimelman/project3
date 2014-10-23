@@ -82,7 +82,7 @@ process2 : process2.o syslib.o util.o printf.o helper.o
 # Copy the image to the USB drive in the fishbowl lab
 # WARNING: make sure this is right before you make this target on another system
 boot : image
-	cat image > /dev/sdf
+	cat image > /dev/sdg
 
 # Dependency management
 depend : .depend

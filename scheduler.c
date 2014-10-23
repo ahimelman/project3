@@ -34,20 +34,44 @@ void scheduler(){
   ++current_running->entry_count;
 }
 
+/* Sleep deadline pcb comparator function used for sleep queue sort */
+int pcb_deadline_cmp(node_t *a, node_t *b)
+{
+  if (((pcb_t *)a)->deadline <= ((pcb_t *)b)->deadline)
+    return 1;
+  else
+    return 0;
+}
+
 /* TODO: Blocking sleep. Caution: this function currently cannot be pre-empted! */
 void do_sleep(int milliseconds){
   
   ASSERT( !disable_count );
   uint64_t deadline;
   
+  enter_critical();
   deadline = time_elapsed + milliseconds;
-  while (time_elapsed < deadline){}
- 
+  current_running->deadline = deadline;
+  enqueue_sort(&sleep_wait_queue, (node_t *) current_running, &pcb_deadline_cmp);
+  scheduler_entry();
+  leave_critical();
 }
 
 /* TODO: Check if we can wake up sleeping processes */
 void check_sleeping(){
+  pcb_t *pcb;
 
+  while (TRUE)
+  {
+    pcb = (pcb_t *) peek(&sleep_wait_queue);
+    if (pcb->deadline < time_elapsed)
+    {
+      pcb = (pcb_t *) dequeue(&sleep_wait_queue);
+      enqueue(&ready_queue, (node_t *) pcb);
+    } else {
+      break;
+    }
+  }
 }
 
 /* Do not modify any of the following functions */

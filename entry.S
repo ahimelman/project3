@@ -171,6 +171,7 @@ not_overflow:
 	
 return:
 	/* check the sleeping processes and wake them up on time */
+	call check_sleeping
 	
 	/* Decrement disable_count in anticipation of iret */
         LEAVE_CRITICAL	
