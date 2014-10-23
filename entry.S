@@ -1,4 +1,4 @@
-/* Author(s): <Your name here>
+/* Author(s): Aaron Himelman (himelman), Riley Thomasson (rthomass)
  * COS 318, Fall 2013: Project 3 Pre-emptive Scheduler
  * entry.S
  */
@@ -81,7 +81,13 @@
 
 /* TODO: Test current_running->nested_count, clobbering only eflags */
 #define TEST_NESTED_COUNT \
-	
+	movl %eax, scratch; \
+	movl current_running, %eax; \
+	movl NESTED_COUNT(%eax), %eax; \
+        cmpl $0, %eax; \
+	movl scratch, %eax
+
+
 /** TODO end */
 
 	.data
@@ -136,23 +142,39 @@ syscall_entry:
 	.globl    irq0_entry
 irq0_entry:
 	SEND_EOI // Acknowledge the hardware interrupt
-	/* Increment time_elapsed */	
+        /* Increment time_elapsed */	
+        incl time_elapsed
+        cmpl $0, time_elapsed  
+        jne not_overflow
+        incl time_elapsed+4
+
+not_overflow:
 
 	/* Increment disable_count to reflect the fact that interrupts are off */
+        ENTER_CRITICAL 
 	
 	/* Test nested_count */
+        TEST_NESTED_COUNT
 	
 	/* nested_count not zero, so do nothing */
 	jnz return
 
 	/* do system call */
-	
+	SAVE_CONTEXT(USER)
+        RESTORE_STACK(KERNEL)
+        pushl $0                  // No argument to yield
+        pushl $0                  // yield syscall number
+        call system_call_helper
+	addl    $8, %esp
+	SAVE_STACK(KERNEL)
+	RESTORE_CONTEXT(USER)
 	
 return:
 	/* check the sleeping processes and wake them up on time */
 	
 	/* Decrement disable_count in anticipation of iret */
-	
+        LEAVE_CRITICAL	
+
 	iret
 
 /** TODO end */

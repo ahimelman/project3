@@ -19,7 +19,7 @@ volatile uint64_t time_elapsed;
 
 /* TODO: Round-robin scheduling: Save current_running before preempting */
 void put_current_running(){
-  
+    enqueue(&ready_queue, (node_t *) current_running);  
 }
 
 /* Change current_running to the next task */
