@@ -171,8 +171,14 @@ not_overflow:
 	
 return:
 	/* check the sleeping processes and wake them up on time */
-	call check_sleeping
-	
+	pushl %eax
+        pushl %edx
+        pushl %ecx
+        call check_sleeping
+        popl %ecx
+        popl %edx
+        popl %eax	
+
 	/* Decrement disable_count in anticipation of iret */
         LEAVE_CRITICAL	
 

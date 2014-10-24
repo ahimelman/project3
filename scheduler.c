@@ -64,6 +64,7 @@ void check_sleeping(){
   while (TRUE)
   {
     pcb = (pcb_t *) peek(&sleep_wait_queue);
+    if (pcb == NULL) break;
     if (pcb->deadline < time_elapsed)
     {
       pcb = (pcb_t *) dequeue(&sleep_wait_queue);

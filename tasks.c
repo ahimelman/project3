@@ -4,11 +4,8 @@
 #include "th.h"
 
 struct task_info task[] = {
-    /* clock and status thread */
-    TH(&clock_thread),
-    TH(&ps_thread),
-    PROC(PROC1_ADDR),
-    PROC(PROC2_ADDR),
+    TH(&thread_1),
+    TH(&thread_2)
     };
 
 enum {

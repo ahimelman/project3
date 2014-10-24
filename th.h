@@ -4,7 +4,7 @@
 #define TH_H
 
 // Prototypes
-void clock_thread(void);
-void ps_thread(void);
+void thread_1(void);
+void thread_2(void);
 
 #endif
