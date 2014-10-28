@@ -1,4 +1,4 @@
-/* Author(s): <Your name here>
+/* Author(s): Aaron Himelman (himelman), Riley Thomasson (rthomass)
  * COS 318, Fall 2013: Project 3 Pre-emptive Scheduler
  * Implementation of locks, condition variables, sempahores and barriers.
 */
@@ -97,47 +97,75 @@ void lock_release(lock_t * l){
 
 /* TODO: Initialize a condition variable */
 void condition_init(condition_t * c){
-
+    queue_init(&c->wait_queue); 
 }
 
 /* TODO: Release lock m and block the thread (enqueued on c).  When unblocked,
    re-acquire m */
 void condition_wait(lock_t * m, condition_t * c){
-  
+    lock_release(m);
+    enter_critical();
+    block(&c->wait_queue);
+    leave_critical();
+    lock_acquire(m);
 }
 
 /* TODO: Unblock the first thread waiting on c, if it exists */
 void condition_signal(condition_t * c){
- 
+    enter_critical();
+    unblock_one(&c->wait_queue);     
+    leave_critical();
 }
 
 /* TODO: Unblock all threads waiting on c */
 void condition_broadcast(condition_t * c){
-  
+    enter_critical();
+    unblock_all(&c->wait_queue);  
+    leave_critical();
 }
 
 /* TODO: Initialize a semaphore with the specified value. value must be >= 0 */
 void semaphore_init(semaphore_t * s, int value){
-  
+    queue_init(&s->wait_queue);
+    ASSERT(value >= 0);
+    s->value = value;  
 }
 
 /* TODO: Increment the semaphore value atomically */
 void semaphore_up(semaphore_t * s){
-  
+    enter_critical();
+    if (!unblock_one(&s->wait_queue)) 
+        ++s->value;
+    leave_critical();  
 }
 
 /* TODO: Block until the semaphore value is greater than zero and decrement it */
 void semaphore_down(semaphore_t * s){
-  
+    enter_critical();
+    if (s->value > 0)
+        --s->value;
+    else
+        block(&s->wait_queue);
+    leave_critical();      
 }
 
 /* TODO: Initialize a barrier.  n is number of threads that rendezvous at the
    barrier */
 void barrier_init(barrier_t * b, int n){
- 
+    queue_init(&b->wait_queue);
+    b->n = n;
+    b->curr = 0; 
 }
 
 /* TODO: Block until all n threads have called barrier_wait */
 void barrier_wait(barrier_t * b){
-  
+    enter_critical();
+    if (++b->curr < b->n) {
+        block(&b->wait_queue);
+    }
+    else { 
+        unblock_all(&b->wait_queue);
+        b->curr = 0;
+    }
+    leave_critical();  
 }

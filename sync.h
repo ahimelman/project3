@@ -1,4 +1,4 @@
-/* Author(s): <Your name here>
+/* Author(s): Aaron Himleman (himelman), Riley Thomasson (rthomass)
  * COS 318, Fall 2013: Project 3 Pre-emptive Scheduler
  * Defines locks, condition variables, sempahores and barriers.
 */
@@ -20,17 +20,20 @@ typedef struct {
 
 /* TODO */
 typedef struct {
-  
+    node_t wait_queue;  
 } condition_t;
 
 /* TODO */
 typedef struct {
-  
+    node_t wait_queue;
+    int value;  
 } semaphore_t;
 
 /* TODO */
 typedef struct {
- 
+    node_t wait_queue;
+    int n;
+    int curr; 
 } barrier_t;
 
 // Prototypes
