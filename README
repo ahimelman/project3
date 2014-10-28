@@ -1,24 +1,5 @@
-Brendan Wright
-Jeremy Cohen
+Riley Thomasson
+Aaron Himelman
 COS 318 Project 3: Pre-emptive Kernel
 
-All of the required parts of project 3 are functioning.
-
-We attempted the extra credit challenge to implement priority scheduling.
-Instead of dequeuing the least-recently-added element in the FIFO ready
-queue, we randomly dequeue an element with probabilistic weight equal to its
-priority.  To do this, we first iterate through the queue and calculate
-the total priority P; then we choose a random number between 0 and P-1; then 
-we iterate through the queue again until the cumulative total priority is
-greater than the random number we chose.
-
-Priority scheduling works when we modify test_preempt to include priorities
-in all configurations we could think of.
-
-However, on rare occasions, priority scheduling causes test_all to crash.  We 
-could not identify the source of the bug, since GDB apparently fixes the bug.
-
-Priority scheduling is on by default.  To turn it off, edit the Makefile to
-comment out the line:
-
-CFLAGS += -DPRIORITY
+All parts of the assignment appear to be functioning as desired. We mostly followed the directions as outlined in the commented code. One issue we faced was not properly entering into a critical section when blocking and unblocking. We also initially didn't save the callee-save registers in entry.S, which caused them to be clobbered. 
