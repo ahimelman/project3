@@ -103,11 +103,11 @@ void condition_init(condition_t * c){
 /* TODO: Release lock m and block the thread (enqueued on c).  When unblocked,
    re-acquire m */
 void condition_wait(lock_t * m, condition_t * c){
-    lock_release(m);
     enter_critical();
+    lock_release_helper(m);
     block(&c->wait_queue);
+    lock_acquire_helper(m);
     leave_critical();
-    lock_acquire(m);
 }
 
 /* TODO: Unblock the first thread waiting on c, if it exists */

@@ -10,8 +10,8 @@ enum {
     NUM_THREADS = 3,
     NUM_ITERATIONS = 1000,
     MAX_SLEEP = 20,
-    LINE = 20,                  /* Line where result should be printed */
-    COL = 48                    /* Column where result should be printed */
+    LINE = 2,                  /* Line where result should be printed */
+    COL = 4                    /* Column where result should be printed */
 };
 
 static bool_t barrier_initialized = FALSE;
